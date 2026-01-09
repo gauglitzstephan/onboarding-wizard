@@ -5,7 +5,8 @@
     "moduleResolution": "Bundler",
     "strict": true,
     "noEmit": true,
-    "types": ["vitest/globals"]
+    "lib": ["ESNext"],
+    "types": ["node", "vitest/globals"]
   },
   "include": ["src/**/*.ts", "vitest.config.ts"]
 }
