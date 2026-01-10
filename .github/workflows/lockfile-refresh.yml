@@ -1,0 +1,27 @@
+name: Lockfile Refresh
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm install
+      - uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(lockfile): refresh package-lock.json"
+          title: "chore(lockfile): refresh package-lock.json"
+          body: "This PR is auto-generated to refresh package-lock.json, enabling deterministic CI (npm ci) in a follow-up change."
+          branch: "automation/lockfile-refresh"
+          delete-branch: true
+          add-paths: package-lock.json
