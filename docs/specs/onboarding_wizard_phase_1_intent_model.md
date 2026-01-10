@@ -68,7 +68,7 @@ The following intents are finite and complete for Phase 1. No additional intents
 
 ### Intent 5 — Define Information Artifact Slots
 - **Triggering actor (role-class):** Responsibility Owner
-- **Preconditions:** Context fixed; lifecycle defined; responsibility map complete for the relevant slot.
+- **Preconditions:** Context fixed (role, start date, organization unit); lifecycle exists (draft or active); explicit owner assigned for the artifact slot. Artifact slots may be added progressively, but never without an explicit owner.
 - **System effect:** Visible state: `Artifact Slot Recorded` with owner and availability status.
 - **Fail-loud behavior:** Missing owner or missing lifecycle association blocks recording with an explanation.
 - **Explicit exclusions:** No content validation, no knowledge evaluation, no completion scoring.
