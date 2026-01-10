@@ -1,0 +1,100 @@
+name: Phase 1 – Intent Model P0 Review Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  phase1-intent-p0:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect changed files
+        id: changes
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git diff --name-only origin/${{ github.base_ref }} > changed_files.txt
+
+      # --------------------------------------------------
+      # P0 Gate 1 — No implementation artifacts
+      # --------------------------------------------------
+      - name: Fail if code or UX files are changed
+        run: |
+          if grep -E '\.(ts|js|tsx|jsx|css|scss|html)$' changed_files.txt; then
+            echo "❌ P0 violation: Phase 1 PR must not include code or UX changes."
+            exit 1
+          fi
+
+      # --------------------------------------------------
+      # P0 Gate 2 — Required spec references
+      # --------------------------------------------------
+      - name: Verify Spec Grounding references
+        run: |
+          REQUIRED_SPECS=(
+            "onboarding_wizard_product_definition_system_level"
+            "onboarding_wizard_structure_blueprint_taxonomy"
+            "onboarding_wizard_system_enablement_surface_specification"
+            "onboarding_wizard_phase_1_intent_spec"
+          )
+
+          FOUND=0
+          for SPEC in "${REQUIRED_SPECS[@]}"; do
+            if grep -R "$SPEC" .; then
+              FOUND=$((FOUND+1))
+            else
+              echo "❌ P0 violation: Missing explicit reference to spec: $SPEC"
+              exit 1
+            fi
+          done
+
+          if [ "$FOUND" -lt 4 ]; then
+            echo "❌ P0 violation: Not all required specs are referenced."
+            exit 1
+          fi
+
+      # --------------------------------------------------
+      # P0 Gate 3 — Spec Grounding section exists
+      # --------------------------------------------------
+      - name: Check for Spec Grounding section
+        run: |
+          if ! grep -R "Spec Grounding" .; then
+            echo "❌ P0 violation: Missing 'Spec Grounding' section."
+            exit 1
+          fi
+
+      # --------------------------------------------------
+      # P0 Gate 4 — Boundary / Invalid Intents explicitly modeled
+      # --------------------------------------------------
+      - name: Check for Boundary / Invalid Intents section
+        run: |
+          if ! grep -R -E "Boundary Intent|Invalid Intent" .; then
+            echo "❌ P0 violation: Boundary / Invalid Intents are not explicitly modeled."
+            exit 1
+          fi
+
+      # --------------------------------------------------
+      # P0 Gate 5 — Finite intent taxonomy (no open language)
+      # --------------------------------------------------
+      - name: Fail on open-ended intent language
+        run: |
+          if grep -R -E "future intent|other intent|optional intent|etc\." .; then
+            echo "❌ P0 violation: Intent taxonomy must be finite and closed."
+            exit 1
+          fi
+
+      # --------------------------------------------------
+      # P0 Gate 6 — What did NOT change section exists
+      # --------------------------------------------------
+      - name: Check for 'What did NOT change' section
+        run: |
+          if ! grep -R "What did NOT change" .; then
+            echo "❌ P0 violation: Missing 'What did NOT change' section."
+            exit 1
+          fi
+
+      - name: Phase 1 P0 Review Passed
+        run: |
+          echo "✅ Phase 1 Intent Model passed all P0 review gates."
