@@ -12,6 +12,7 @@ export type OnboardingInstanceStub = {
   proposedEndDateIso: string;
 };
 
+// Canonical integration entry point for block evaluation.
 export function computeBlocks(instance: OnboardingInstanceStub): Block[] {
   return evaluateInvariants({
     lifecycleState: instance.lifecycleState,
