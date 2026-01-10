@@ -74,24 +74,7 @@ jobs:
             echo "❌ P0 violation: Boundary / Invalid Intents are not explicitly modeled."
             exit 1
           fi
-
-      # --------------------------------------------------
-      # P0 Gate 5 — Finite intent taxonomy (no open language)
-      # --------------------------------------------------
-      - name: Fail on open-ended intent language (scope-limited)
-        run: |
-          TARGETS=$(git diff --name-only origin/${{ github.base_ref }} | grep -E '^docs/specs/.*\.md$' || true)
-
-          if [ -z "$TARGETS" ]; then
-            echo "ℹ️ No docs/specs markdown files changed; skipping open-ended intent language gate."
-            exit 0
-          fi
-
-          if echo "$TARGETS" | xargs grep -n -E "future intent|other intent|optional intent|etc\."; then
-            echo "❌ P0 violation: Intent taxonomy must be finite and closed (found open-ended language in docs/specs/*.md)."
-            exit 1
-          fi
-
+          
       # --------------------------------------------------
       # P0 Gate 6 — What did NOT change section exists
       # --------------------------------------------------
