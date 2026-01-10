@@ -23,6 +23,7 @@ export type InvariantInput = {
   proposedEndDateIso: string;
 };
 
+// @internal Domain primitive. Integration must use computeBlocks(instance).
 export function evaluateInvariants(input: InvariantInput): Block[] {
   const blocks: Block[] = [];
 
